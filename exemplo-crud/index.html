@@ -1,34 +1,71 @@
 <!DOCTYPE html><!-- indica que pode usar tags do HTML5 -->
 <html>
+
 <head>
     <title>Exemplo CRUD</title>
 </head>
+
 <body>
     <h4>Exemplo CRUD usando a api back-end.</h4>
+    Nome:<br>
+    <input type="text" id="nome"><br>
+    Email:<br>
+    <input type="text" id="email"><br>
+    <input type="button" value="Gravar" onclick="incluir()">
+
     <div id="lista">minha div onde vamos colocar a lista da api</div>
     <script>
         // request via JavaScript ajax 4 passos
         // 01 criar a váriavel
         xhttp = new XMLHttpRequest();
-        // 02 definição do nosso request (forma e endereço)
-        xhttp.open("GET","https://zipmatheus.herokuapp.com/api/usuario/");
-        // 03 manda de fato a request
-        xhttp.send();
-        // 04 execução quando tiver a devolutiva do request
-        xhttp.onload = function(){
-            lista = this.responseText;
-            console.log(lista);
-            lista = JSON.parse(lista);
-            console.log(lista);
 
-            document.getElementById('lista').innerHTML = "Lista de pessoas <br>";
-
-            for (const i of lista) {
-                document.getElementById('lista').append(i.email+" - ");    
+        function listar() {
+            // 02 definição do nosso request (forma e endereço)
+            xhttp.open("GET", "https://qua-209050.herokuapp.com/api/usuario/");
+            // 03 manda de fato a request
+            xhttp.send();
+            // 04 execução quando tiver a devolutiva do request
+            xhttp.onload = function () {
+                lista = this.responseText;
+                console.log(lista);
+                lista = JSON.parse(lista);
+                console.log(lista);
+                
+                texto = "Lista de pessoas <br>";
+                for (const u of lista) {
+                    texto += `${u.nome} - ${u.email} - 🔄 <br>`;
+                }
+                document.getElementById('lista').innerHTML = texto;
             }
-            
         }
+
+        function incluir() {
+            //alert("Estamos dentro da function incluir");
+            var usuario = {};
+            usuario.nome = document.getElementById("nome").value;
+            usuario.email = document.getElementById("email").value;
+            console.log(usuario);
+
+            xhttp.open("POST", "https://qua-209050.herokuapp.com/api/usuario/");
+            xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+
+            xhttp.send(JSON.stringify(usuario));
+            xhttp.onload = function () {
+                console.log(this.responseText);
+                listar();
+                limpar();
+            }
+
+        }
+
+        function limpar() {
+            document.getElementById("nome").value = "";
+            document.getElementById("email").value = "";
+        }
+
+        listar();
 
     </script>
 </body>
+
 </html>
