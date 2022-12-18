@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Nome da Loja</title>
+</head>
+
+<body>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        #banner {
+            background-color: black;
+            padding: 30px 300px 30px 300px;
+            width: 100%;
+            position: fixed;
+            top: 0px;
+        }
+
+        #banner img {
+            width: 50px;
+            float: left;
+            margin-right: 30px;
+        }
+
+        #banner h1 {
+            color: aqua;
+        }
+
+        #container {
+            display: grid;
+            place-items: center;
+        }
+
+        .ls-produto {
+            width: 700px;
+            margin-top: 106px;
+        }
+
+        #lsQuantidade {
+            width: 700px;
+            margin-top: 106px;
+            display: none;
+        }
+
+        .produto {
+            border: solid black 3px;
+            width: 200px;
+            height: 210px;
+            float: left;
+            margin: 10px;
+            cursor: pointer;
+            /* border-color: aqua; */
+        }
+
+        .produto-selecionado {
+            border-color: aqua;
+        }
+
+        .produto img {
+            width: 100%;
+            height: 70%;
+        }
+
+        .produto .nome {
+            background-color: black;
+            color: aqua;
+            height: 15%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .produto .valor {
+            display: flex;
+            align-items: center;
+            height: 15%;
+            padding-left: 10px;
+        }
+
+        #bt-fixo,
+        #bt-fixo span {
+            background-color: aqua;
+            width: 90px;
+            height: 90px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            border: solid black 3px;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            cursor: pointer;
+        }
+
+        #bt-fixo span {
+            width: 20px;
+            height: 20px;
+            bottom: 95px;
+            background-color: black;
+            color: aqua;
+        }
+
+        @media (max-width: 700px) {
+            #banner {
+                padding: 30px 30px 30px 30px;
+            }
+
+            #bt-fixo {
+                right: 30px;
+            }
+        }
+
+        table {
+            width: 100%;
+        }
+
+        tr {
+            height: 30px;
+            background-color: gray;
+            text-align: center;
+
+        }
+
+        tr span {
+            background-color: black;
+            color: white;
+            height: 100%;
+            padding: 6%;
+            margin-right: 2px;
+            margin-left: 2px;
+            cursor: pointer;
+            float: left;
+            width: 20px;
+        }
+
+        label {
+            font-size: larger;
+        }
+
+        #nome {
+            background-color: gray;
+            width: 70%;
+            height: 30px;
+            border: none;
+        }
+
+        #bt-enviar {
+            background-color: black;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+        }
+    </style>
+    <div id="banner">
+        <img src="icone-loja.png" alt="">
+        <h1>Ovos de colher</h1>
+    </div>
+    <div id="container">
+        <div id="lsQuantidade">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Valor Unitário</th>
+                        <th>Quantidade</th>
+                        <th>Valor Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <label for="nome">Nome</label><br>
+            <input type="text" id="nome">
+            <input type="button" id="bt-enviar" value="Enviar Pedido" onclick="enviarWhatsApp()">
+        </div>
+        <div class="ls-produto" id="lsProduto">
+        </div>
+
+        <div id="bt-fixo" onclick="carrinho(),mudarTela()">
+            <i style="font-size:54px" class="fa">&#xf07a;</i>
+            <span id="qt-produto">0</span>
+        </div>
+    </div>
+    <script>
+        qtCarrinho = 0;
+        function addCarrinho(elemento, i) {
+            if (elemento.classList.length == 2) {
+                qtCarrinho--;
+                document.getElementById("qt-produto").innerHTML = qtCarrinho;
+                elemento.classList.remove("produto-selecionado");
+                lsProduto[i].carrinho = false;
+            } else {
+                qtCarrinho++;
+                document.getElementById("qt-produto").innerHTML = qtCarrinho;
+                elemento.classList.add("produto-selecionado");
+                p = lsProduto[i];
+                p.carrinho = true;
+                p.quantidade = 1;
+                p.valorParcial = p.valor * p.quantidade;
+            }
+
+        }
+
+        xhttp = new XMLHttpRequest();
+
+        function buscarProduto() {
+            xhttp.open("GET", "https://luiz87.github.io/prj-frontend/fake-api/produto.js");
+            xhttp.send();
+            xhttp.onload = function () {
+                lsProduto = this.responseText;
+                lsProduto = JSON.parse(lsProduto);
+                clonarProdutos(lsProduto);
+            }
+        }
+
+        function clonarProdutos(lsProduto) {
+            txProduto = "";
+            i = 0;
+            for (produto of lsProduto) {
+                // console.log(produto);
+                txProduto += `
+                <div class="produto" onclick="addCarrinho(this,${i})">
+                <img src="${produto.img}" alt="">
+                <p class="nome">${produto.nome}</p>
+                <p class="valor">R$ ${produto.valor}</p>
+                </div>
+                `;
+                produto.carrinho = false;
+                i++;
+            }
+            document.getElementById("lsProduto").innerHTML = txProduto;
+        }
+
+        buscarProduto();
+
+        tela = "lsProduto";
+
+        function carrinho() {
+            tbody = "";
+            pedido = "Segue o meu pedido\n";
+            i = 0;
+            it = 1;
+            valorFinal = 0;
+            for (p of lsProduto) {
+                if (p.carrinho) {
+                    tbody += `<tr>
+                    <td>${p.nome}</td>
+                    <td>${p.valor.toFixed(2)}</td>
+                    <td>${p.quantidade}</td>
+                    <td>${p.valorParcial.toFixed(2)}</td>
+                    <td><span onclick="add(${i},${it},1)">+</span>
+                        <span onclick="add(${i},${it},-1)">-</span></td>
+                    </tr>`;
+                    it++;
+                    valorFinal += p.valorParcial;
+                    pedido += `${p.nome} ${p.valor.toFixed(2)} x (${p.quantidade}) = ${p.valorParcial.toFixed(2)} \n`;
+                }
+                i++;
+            }
+            tbody += `
+                <tr><td colspan="3">Valor Final</td><td>${valorFinal.toFixed(2)}</td></tr>
+                `
+            pedido += `Valor Final = ${valorFinal.toFixed(2)} \n`
+            document.getElementsByTagName("tbody")[0].innerHTML = tbody;
+
+        }
+
+        function mudarTela() {
+            if (tela == "lsProduto") {
+                document.getElementById("lsQuantidade").style.display = "block";
+                document.getElementById("lsProduto").style.display = "none";
+                tela = "lsQuantidade";
+            } else {
+                document.getElementById("lsQuantidade").style.display = "none";
+                document.getElementById("lsProduto").style.display = "block";
+                tela = "lsProduto";
+            }
+        }
+
+        function add(i, it, opc) {
+            p = lsProduto[i];
+            p.quantidade = p.quantidade + opc;
+            p.valorParcial = p.quantidade * p.valor;
+            if (p.quantidade == 0) {
+                p.carrinho = false;
+                elemento = document.getElementsByClassName("produto")[i];
+                addCarrinho(elemento, i)
+            }
+            carrinho();
+            // tr = document.getElementsByTagName("tr")[it];
+            // tr.getElementsByTagName("td")[2].innerHTML = p.quantidade;
+            // tr.getElementsByTagName("td")[3].innerHTML = p.valorParcial;
+        }
+
+        function enviarWhatsApp() {
+
+            fone = "5561985607460";
+            nome = document.getElementById("nome").value;
+
+            if (nome == '') {
+                alert("Nome obrigatório");
+                return false;
+            }
+
+            if (qtCarrinho == 0) {
+                alert("Escolha 1 produto");
+                return false;
+            }
+
+            pedido += `Cliente: ${nome}`;
+            pedido = encodeURI(pedido);
+            link = `https://api.whatsapp.com/send?phone=${fone}&text=${pedido}`;
+            window.open(link, '_blank');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,6 +1,6 @@
 xhttp = new XMLHttpRequest();
 var listaProduto;
-var api = "https://zipmatheus.herokuapp.com/api/produto/";
+var api = "http://54.204.228.157:8080/api/produto/";
 
 function listarProduto(){
     xhttp.open("GET", api);

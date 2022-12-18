@@ -2,7 +2,7 @@
 // 01 criar a váriavel
 xhttp = new XMLHttpRequest();
 var lista;
-var api = "https://zipmatheus.herokuapp.com/api/usuario/";
+var api = "http://54.204.228.157:8080/api/usuario/";
 
 function listar() {
     // 02 definição do nosso request (forma e endereço)
