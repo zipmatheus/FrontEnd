@@ -214,7 +214,7 @@
         xhttp = new XMLHttpRequest();
 
         function buscarProduto() {
-            xhttp.open("GET", "https://zipmatheus.github.io/FrontEnd/fake-api/produto.js");
+            xhttp.open("GET", "http://zipmatheus.github.io/FrontEnd/fake-api/produto.js");
             xhttp.send();
             xhttp.onload = function () {
                 lsProduto = this.responseText;
